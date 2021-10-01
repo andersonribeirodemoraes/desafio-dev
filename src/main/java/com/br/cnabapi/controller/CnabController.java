@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.br.cnabapi.model.UploadResponseMessage;
+import com.br.cnabapi.service.CnabService;
 import com.br.cnabapi.service.FileService;
 
 @RestController
@@ -19,10 +20,15 @@ public class CnabController {
 	@Autowired
 	private FileService fileService;
 	
+	@Autowired
+	private CnabService cnabService;  
+	
 	@PostMapping
     public ResponseEntity<UploadResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             fileService.save(file);
+            
+            cnabService.execute();
 
             return ResponseEntity.status(HttpStatus.OK)
                                  .body(new UploadResponseMessage("Uploaded the file successfully: " + file.getOriginalFilename()));
